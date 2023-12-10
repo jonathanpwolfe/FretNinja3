@@ -1,6 +1,7 @@
+mod util;
 use dioxus_core::*;
 use dioxus::prelude::*;
-
+use crate::util::instrument::instrument::Instrument;
 fn main() {
     dioxus_desktop::launch(app);
 }
@@ -16,15 +17,7 @@ fn app(cx: Scope) -> Element {
 
 
 }
-#[derive(Debug, Copy, Clone)]
-enum Instrument {
-    GUITAR,
-    BASS,
-    UKELELE,
-    MANDOLIN,
-    BANJO,
-    KEYBOARD,
-}
+
 
 fn instrument_type(cx: Scope) -> (Element, Instrument) {
     let instrument = use_state(cx, || Instrument::GUITAR);
@@ -69,17 +62,3 @@ fn string_count(cx: Scope) -> Element {
     })
 }
 
-enum Note{
-A,
-A#,
-B,
-C,
-C#,
-D,
-D#,
-E,
-F,
-F#,
-G,
-G#,
-}
