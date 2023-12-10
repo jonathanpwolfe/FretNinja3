@@ -3,7 +3,7 @@ pub mod instrument {
     use strum_macros::EnumString;
 
 
-    #[derive(Debug, Copy, Clone, EnumString)]
+    #[derive(Debug, Copy, Clone, PartialEq, EnumString)]
     pub enum Instrument {
         #[strum(serialize = "Guitar")]
         GUITAR,
