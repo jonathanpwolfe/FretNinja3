@@ -6,17 +6,17 @@ fn main() {
 }
 
 fn app(cx: Scope) -> Element {
-   // let instrument = instrument_type(cx);
-   // string_count(cx);
-    cx.render(rsx! {
-        div {
-            instrument_type(cx),
-            string_count(cx),
-        }
-    })
+   let (instrument_element, instrument) = instrument_type(cx);
+   let strings_element = string_count(cx);
+   cx.render(rsx!{div{
+   instrument_element,
+   strings_element,
+   }
+   })
+
 
 }
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 enum Instrument {
     GUITAR,
     BASS,
@@ -26,10 +26,9 @@ enum Instrument {
     KEYBOARD,
 }
 
-fn instrument_type(cx: Scope) -> Element {
-    let instrument = use_state(cx, || Instrument::BASS);
-cx.render(
-    rsx! {
+fn instrument_type(cx: Scope) -> (Element, Instrument) {
+    let instrument = use_state(cx, || Instrument::GUITAR);
+    let element = cx.render(rsx! {
         div {
             h1 { format!("Instrument: {:?}", *instrument) }
             button {
@@ -42,8 +41,11 @@ cx.render(
             }
             // Add buttons for other instruments
         }
-    })
+    });
+
+    (element, **instrument)
 }
+
 
 fn string_count(cx: Scope) -> Element {
     let strings = use_state(cx, || 0);
@@ -65,4 +67,19 @@ fn string_count(cx: Scope) -> Element {
             }
         }
     })
+}
+
+enum Note{
+A,
+A#,
+B,
+C,
+C#,
+D,
+D#,
+E,
+F,
+F#,
+G,
+G#,
 }
