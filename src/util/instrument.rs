@@ -4,7 +4,7 @@ pub mod instrument {
 
 
     #[derive(Debug, Copy, Clone, PartialEq, EnumString)]
-    pub enum Instrument {
+    pub enum InstrumentType {
         #[strum(serialize = "Guitar")]
         GUITAR,
         #[strum(serialize = "Bass")]
