@@ -11,15 +11,15 @@ fn app(cx: Scope) -> Element {
     let (instrument_element, instrument) = get_instrument_type(cx);
     let (bridged_instrument_type_element, bridged_instrument_type) =
         get_bridged_instrument_type(cx, instrument);
-    let mut fretboard = get_fretboard(cx, bridged_instrument_type);
+    //let mut fretboard = get_fretboard(cx, bridged_instrument_type);
 
-    cx.render(rsx! { div { instrument_element, bridged_instrument_type_element } });
+    cx.render(rsx! { div { instrument_element, bridged_instrument_type_element } })
 
-    fretboard.build();
-    fretboard.render(cx)
+    //fretboard.build();
+    //fretboard.render(cx)
 }
 
-fn get_fretboard(cx: Scope, instrument: BridgedInstrumentType) -> FretBoard {
+fn get_fretboard(cx: Scope, instrument: BridgedInstrumentType) -> (Element, FretBoard) {
     // Implement the logic for creating a FretBoard based on the BridgedInstrumentType
     unimplemented!()
 }
@@ -158,9 +158,9 @@ impl FretBoard {
         // Implement FretBoard building logic
     }
 
-    fn render(&self, cx: Scope) -> Element {
-        cx.render(rsx! { div { format!("{:?}",self) } })
-    }
+   // fn render(&self, cx: Scope) -> Element {
+    //    cx.render(rsx! { div { format!("{:?}",self) } })
+ //   }
 }
 #[derive(Debug, Copy, Clone)]
  struct Instrument{
