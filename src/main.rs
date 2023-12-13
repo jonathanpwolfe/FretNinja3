@@ -1,27 +1,55 @@
-mod util;
+mod instrument;
 use dioxus_core::*;
 use dioxus::prelude::*;
-use crate::util::instrument::instrument::InstrumentType;
-
+use crate::instrument::instrument::instrument::{Bridge, BridgedInstrumentType, FretBoard, Instrument, InstrumentType};
 fn main() {
     dioxus_desktop::launch(app);
 }
 
 fn app(cx: Scope) -> Element {
-    let (instrument_element, instrument) = get_instrument_type(cx);
-    let (bridged_instrument_type_element, bridged_instrument_type) =
-        get_bridged_instrument_type(cx, instrument);
-    //let mut fretboard = get_fretboard(cx, bridged_instrument_type);
-
-    cx.render(rsx! { div { instrument_element, bridged_instrument_type_element } })
-
-    //fretboard.build();
-    //fretboard.render(cx)
+    get_info(cx)
 }
+fn get_info(cx: Scope) -> Element {
+let (instrument_type_element, instrument_type) = get_instrument_type(cx);
+    let (bridged_instrument_type_element, bridged_instrument_type) =
+        get_bridged_instrument_type(cx, instrument_type);
+    let (fretcount_element, fret_count) = get_fretcount(cx, bridged_instrument_type);
+    let (instrument_element, instrument) = generate_instrument(cx, bridged_instrument_type, fret_count);
+    cx.render(rsx! { 
+        div { 
+            instrument_type_element, 
+            bridged_instrument_type_element, 
+            fretcount_element 
+        }
+    })
+    }
+ pub fn generate_instrument(cx : Scope, bridged_instrument_type : BridgedInstrumentType, number_of_frets: u8) -> (Element, Instrument){
+        let instrument = use_state(cx, ||Instrument::new(bridged_instrument_type, number_of_frets));
 
-fn get_fretboard(cx: Scope, instrument: BridgedInstrumentType) -> (Element, FretBoard) {
-    // Implement the logic for creating a FretBoard based on the BridgedInstrumentType
-    unimplemented!()
+        let element = cx.render(rsx!{
+            button {
+                onclick : |_| todo!() //generate(cx, &mut instrument)
+                , "GENERATE"
+            }
+        });
+        (element, (**instrument).clone())
+    }
+    /*fn generate(cx: Scope, instrument : &mut Instrument) -> Element {
+        cx.render(rsx!{a {"yada"}})
+    }*/
+fn get_fretcount(cx: Scope, instrument: BridgedInstrumentType) -> (Element, u8){
+    let fret_count = use_state(cx, || 22);
+    let element = cx.render(rsx!{
+        h1 {format!("Frets: {}", fret_count)}
+        button {
+            onclick : move |_| fret_count.set(22), "22 Frets"
+        }
+        button {
+
+            onclick : move |_| fret_count.set(24), "24 Frets"
+        }
+    });
+    (element, **fret_count)
 }
 
 fn get_instrument_type(cx: Scope) -> (Element, InstrumentType) {
@@ -125,58 +153,4 @@ fn get_bridged_instrument_type(
         )
     }
 }
-#[derive(Debug, Copy, Clone)]
-struct Bridge {
-    string_count: u8,
-}
-
-impl Bridge {
-    fn new(string_count: u8) -> Self {
-        Bridge { string_count }
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-struct BridgedInstrumentType {
-    instrument_type: InstrumentType,
-    bridge: Bridge,
-}
-
-impl BridgedInstrumentType {
-    fn new(bridge: Bridge, instrument_type: InstrumentType) -> Self {
-        BridgedInstrumentType {
-            instrument_type,
-            bridge,
-        }
-    }
-}
-#[derive(Debug, Copy, Clone)]
-struct FretBoard {}
-
-impl FretBoard {
-    fn build(&mut self) {
-        // Implement FretBoard building logic
-    }
-
-   // fn render(&self, cx: Scope) -> Element {
-    //    cx.render(rsx! { div { format!("{:?}",self) } })
- //   }
-}
-#[derive(Debug, Copy, Clone)]
- struct Instrument{
-        instrument_type: InstrumentType,
-        bridge: Bridge,
-        number_of_frets : u8,
-
-    }
- impl Instrument{
-
-    fn new(bridged_instrument_type: BridgedInstrumentType, number_of_frets: u8) -> Self{
-        Instrument{
-            instrument_type : bridged_instrument_type.instrument_type,
-            bridge : bridged_instrument_type.bridge,
-            number_of_frets : number_of_frets
-        }
-    }
-   }
 
