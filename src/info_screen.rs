@@ -1,10 +1,11 @@
 
    
     use dioxus::prelude::*;
+    use dioxus_core::ScopeState;
     use tokio::task::spawn_local;
 
-use crate::instrument:: instrument::{Bridge, BridgedInstrumentType, Instrument, InstrumentType};
-
+use crate::instrument::instrument::{Bridge, BridgedInstrumentType, Instrument, InstrumentType};
+use crate::note::note::{Note, NoteName};
 
 
 
@@ -51,29 +52,20 @@ pub fn get_info(cx: Scope) -> Element {
     })
 }
 
-async fn generate_fretboard(cx: Scope<'_>, instrument: Instrument) -> (Element, Instrument) {
-    // Create a vector of elements using a regular Rust for loop
-    let fretboard_elements: Vec<Element> = instrument.fretboard.notes.clone()
-        .into_iter()
-        .flat_map(|i| (0..instrument.number_of_frets).map(move |j| (i, j)))
-        .map(|(i, j)| cx.render(rsx! { p { format!("String {:?}, Fret {}", i, j) } }))
-        .collect();
+async fn generate_fretboard(cx: Scope<'_>, instrument: Instrument)  {
 
-    // Render the elements within the rsx! macro
-    let fretboard = cx.render(rsx! {
-        div {
-            // You can include other JSX-like elements or components here
-            // ...
-
-            // Include the fretboard elements
-            { for element in fretboard_elements { 
-                element; } }
+   let notes = use_state(cx, || instrument.fretboard.notes);
+   for string in 0..instrument.number_of_strings{
+        for note in 0..instrument.number_of_frets{
+        note;
         }
-    });
+
+   }
+    // Render the elements within the rsx! macro
+
 
     // You can update the state or perform other actions based on your logic
 
-    (fretboard, instrument.clone())
 }
 
 fn get_fretcount(cx: Scope, instrument: BridgedInstrumentType) -> (Element, u8) {

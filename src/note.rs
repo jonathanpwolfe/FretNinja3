@@ -1,9 +1,17 @@
 pub mod note {
-    struct Note{
-    note_name : NoteName,
+    use dioxus::prelude::*;
+    use dioxus::prelude::{IntoDynNode, Scope, render, VNode};
+    use shipyard::Component;
+    use dioxus_core::DynamicNode;
+
+    #[derive(Debug, Component)]
+    pub struct Note {
+        note_name: NoteName,
     }
+
     use strum_macros::EnumString;
-    #[derive(EnumString)]
+
+    #[derive(EnumString, Debug)]
     pub enum NoteName {
         #[strum(serialize = "A")]
         A,

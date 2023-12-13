@@ -14,3 +14,4 @@ strum = "0.23.0"
 strum_macros = "0.23.0"
 async-std = "1.10.0"
 tokio = { version = "1.35.0", features = ["full"] }
+shipyard = "0.6.2"

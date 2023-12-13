@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 mod info_screen;
 mod instrument;
+mod note;
 use info_screen::get_info;
 
 #[tokio::main]
