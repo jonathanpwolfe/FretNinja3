@@ -12,3 +12,5 @@ dioxus-desktop = "0.4.3"
 dioxus-core = "0.4.3"
 strum = "0.23.0"
 strum_macros = "0.23.0"
+async-std = "1.10.0"
+tokio = { version = "1", features = ["full"] }
