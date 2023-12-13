@@ -1,8 +1,10 @@
 pub mod note {
-
+    struct Note{
+    note_name : NoteName,
+    }
     use strum_macros::EnumString;
     #[derive(EnumString)]
-    pub enum Note {
+    pub enum NoteName {
         #[strum(serialize = "A")]
         A,
         #[strum(serialize = "A#")]

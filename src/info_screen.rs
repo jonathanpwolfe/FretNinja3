@@ -18,14 +18,14 @@ impl DetachedScope for Scope<'_> {
         Scope::new()
     }
 }
-pub fn get_info(cx: Scope) -> (Element, Instrument) {
+pub fn get_info(cx: Scope) -> Element {
     let (instrument_type_element, instrument_type) = get_instrument_type(cx);
     let (bridged_instrument_type_element, bridged_instrument_type) =
         get_bridged_instrument_type(cx, instrument_type);
     let (fretcount_element, fret_count) = get_fretcount(cx, bridged_instrument_type);
     let instrument = use_state(cx, || Instrument::new(bridged_instrument_type, fret_count));
 
-    let element = cx.render(rsx! {
+   cx.render(rsx! {
         div {
             instrument_type_element,
             bridged_instrument_type_element,
@@ -42,22 +42,21 @@ pub fn get_info(cx: Scope) -> (Element, Instrument) {
                     // Use tokio::task::spawn_local with the Scope
                     spawn_local(async move {
                         // Use `await` here to wait for the result of the async function
-                        generate_fretboard(detached_scope, instrument_clone).await;
+                       return generate_fretboard(detached_scope, instrument_clone).await;
                     });
                 },
                 "Generate"
             }
         }
-    });
-
-    (element, (**instrument).clone())
+    })
 }
 
 async fn generate_fretboard(cx: Scope<'_>, instrument: Instrument) -> (Element, Instrument) {
     // Create a vector of elements using a regular Rust for loop
-    let fretboard_elements: Vec<Element> = (0..instrument.number_of_strings)
+    let fretboard_elements: Vec<Element> = instrument.fretboard.notes.clone()
+        .into_iter()
         .flat_map(|i| (0..instrument.number_of_frets).map(move |j| (i, j)))
-        .map(|(i, j)| cx.render(rsx! { p { format!("String {}, Fret {}", i, j) } }))
+        .map(|(i, j)| cx.render(rsx! { p { format!("String {:?}, Fret {}", i, j) } }))
         .collect();
 
     // Render the elements within the rsx! macro
@@ -74,7 +73,7 @@ async fn generate_fretboard(cx: Scope<'_>, instrument: Instrument) -> (Element, 
 
     // You can update the state or perform other actions based on your logic
 
-    (fretboard, instrument)
+    (fretboard, instrument.clone())
 }
 
 fn get_fretcount(cx: Scope, instrument: BridgedInstrumentType) -> (Element, u8) {
