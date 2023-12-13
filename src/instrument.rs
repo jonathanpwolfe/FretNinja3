@@ -1,8 +1,8 @@
-pub mod instrument {
-
-    use strum_macros::EnumString;
 
 
+   
+   pub mod instrument{
+        use strum_macros::EnumString;
     #[derive(Debug, Copy, Clone, PartialEq, EnumString)]
     pub enum InstrumentType {
         #[strum(serialize = "Guitar")]
@@ -95,4 +95,4 @@ impl FretBoard {
    
    }
 
-}
+    }
