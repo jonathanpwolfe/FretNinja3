@@ -9,14 +9,12 @@ pub mod note {
         note_name: NoteName,
     }
     impl Note {
-      pub fn render(self: &Self) -> String{
-                return "#{
-                    h1 {format!('{:?}',self.note_name)}
-
-                }#".to_string();
-              
-        }
+   pub fn render<'a>(&self, cx: Scope<'a>) -> DynamicNode<'a> {
+        ScopeState::make_node(cx, rsx! {format!("{{<span>{:?}</span>}}", self.note_name)})
     }
+}
+
+
     use strum_macros::EnumString;
 
     #[derive(EnumString, Clone, Debug)]

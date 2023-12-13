@@ -93,5 +93,5 @@ impl FretBoard {
     }
    
    }
-
+  
     }

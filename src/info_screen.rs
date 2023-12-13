@@ -19,41 +19,49 @@ impl DetachedScope for Scope<'_> {
         Scope::new()
     }
 }
+fn Generate(cx: Scope<'_>, instrument: Instrument) -> Element<'_> {
+    cx.render(rsx! {
+        div {
+            button {
+                onclick: move |_| {
+                    let instrument_clone = instrument.clone();
+                    async move {
+                        generate_fretboard(Scope::new(), &instrument_clone).await;
+                    };
+                },
+                {format!("Generate")}
+            }
+        }
+    })
+}
+
+
 pub fn get_info(cx: Scope) -> Element {
     let (instrument_type_element, instrument_type) = get_instrument_type(cx);
     let (bridged_instrument_type_element, bridged_instrument_type) =
         get_bridged_instrument_type(cx, instrument_type);
     let (fretcount_element, fret_count) = get_fretcount(cx, bridged_instrument_type);
     let instrument = use_state(cx, || Instrument::new(bridged_instrument_type, fret_count));
+let generated = Generate(cx, (**instrument).clone());
 
-    cx.render(rsx! {
+  cx.render(rsx! {
         div {
             instrument_type_element,
             bridged_instrument_type_element,
             fretcount_element,
+            generated,
         }
-    div {
-            button {
-                onclick: move |_| {
-                      let element = generate_fretboard(cx, (**instrument).clone());
-                    }
-                },
-                "Generate"
-            }
+    })
 
-    }
-    )
-}
-fn generate_fretboard(cx: Scope, instrument: Instrument) -> Element {
-
-   let notes = use_state(cx, move ||instrument.fretboard.notes.clone());
-   let mut fretboard : String = "".to_string();
-  for a in notes.iter(){
-    fretboard =format!("{}\n{}",fretboard,a.render()).to_string();
   }
-  cx.render(rsx!{fretboard})
 
+async fn generate_fretboard<'a>(cx: Scope<'a>, instrument: &Instrument) ->Element<'a> {
+    let notes = use_state(cx, move || instrument.fretboard.notes.clone());
+    let fretboard :Vec<_>= notes.iter().map(|a| a.render(cx)).collect();
+
+    cx.render(rsx! { div { format!("{:?}",fretboard) } })
 }
+
 
 fn get_fretcount(cx: Scope, instrument: BridgedInstrumentType) -> (Element, u8) {
     let fret_count = use_state(cx, || 22);
@@ -105,7 +113,6 @@ fn get_instrument_type(cx: Scope) -> (Element, InstrumentType) {
 
     (element, **instrument_type)
 }
-
 fn get_bridged_instrument_type(
     cx: Scope,
     instrument_type: InstrumentType,
