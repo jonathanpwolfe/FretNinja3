@@ -4,14 +4,22 @@ pub mod note {
     use shipyard::Component;
     use dioxus_core::DynamicNode;
 
-    #[derive(Debug, Component)]
+    #[derive(Debug, Clone, Component)]
     pub struct Note {
         note_name: NoteName,
     }
+    impl Note {
+      pub fn render(self: &Self) -> String{
+                return "#{
+                    h1 {format!('{:?}',self.note_name)}
 
+                }#".to_string();
+              
+        }
+    }
     use strum_macros::EnumString;
 
-    #[derive(EnumString, Debug)]
+    #[derive(EnumString, Clone, Debug)]
     pub enum NoteName {
         #[strum(serialize = "A")]
         A,

@@ -26,7 +26,7 @@ pub fn get_info(cx: Scope) -> Element {
     let (fretcount_element, fret_count) = get_fretcount(cx, bridged_instrument_type);
     let instrument = use_state(cx, || Instrument::new(bridged_instrument_type, fret_count));
 
-   cx.render(rsx! {
+    cx.render(rsx! {
         div {
             instrument_type_element,
             bridged_instrument_type_element,
@@ -34,37 +34,24 @@ pub fn get_info(cx: Scope) -> Element {
         }
     div {
             button {
-                // Assuming you're using the `click` event
-                onclick: move |event: MouseEvent| {
-                    // Use `async move` to capture variables inside the async block
-                    let instrument_clone = (**instrument).clone();
-                    // Create a new Scope
-                    let detached_scope = Scope::new();
-                    // Use tokio::task::spawn_local with the Scope
-                    spawn_local(async move {
-                        // Use `await` here to wait for the result of the async function
-                       return generate_fretboard(detached_scope, instrument_clone).await;
-                    });
+                onclick: move |_| {
+                      let element = generate_fretboard(cx, (**instrument).clone());
+                    }
                 },
                 "Generate"
             }
-        }
-    })
+
+    }
+    )
 }
+fn generate_fretboard(cx: Scope, instrument: Instrument) -> Element {
 
-async fn generate_fretboard(cx: Scope<'_>, instrument: Instrument)  {
-
-   let notes = use_state(cx, || instrument.fretboard.notes);
-   for string in 0..instrument.number_of_strings{
-        for note in 0..instrument.number_of_frets{
-        note;
-        }
-
-   }
-    // Render the elements within the rsx! macro
-
-
-    // You can update the state or perform other actions based on your logic
+   let notes = use_state(cx, move ||instrument.fretboard.notes.clone());
+   let mut fretboard : String = "".to_string();
+  for a in notes.iter(){
+    fretboard =format!("{}\n{}",fretboard,a.render()).to_string();
+  }
+  cx.render(rsx!{fretboard})
 
 }
 

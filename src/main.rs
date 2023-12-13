@@ -6,7 +6,8 @@ use info_screen::get_info;
 
 #[tokio::main]
 async fn main() {
-    dioxus_desktop::launch(app);
+    let mut vdom = VirtualDom::new(app);
+     dioxus_desktop::launch(app);
 }
 
 
@@ -15,5 +16,3 @@ fn app(cx: Scope) -> Element {
     cx.bump();
     element
 }
-
-

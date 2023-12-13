@@ -3,6 +3,7 @@
    
    pub mod instrument{
         use strum_macros::EnumString;
+        use crate::note::note::Note;
     #[derive(Debug, Copy, Clone, PartialEq, EnumString)]
     pub enum InstrumentType {
         #[strum(serialize = "Guitar")]
@@ -42,9 +43,6 @@ impl BridgedInstrumentType {
             bridge,
         }
     }
-}
-#[derive(Debug, Copy, Clone)]
-pub struct Note {
 }
 #[derive(Debug, Clone)]
 pub struct FretBoard {
@@ -87,6 +85,7 @@ impl FretBoard {
             number_of_strings : bridged_instrument_type.bridge.string_count,
             number_of_frets : number_of_frets,
             fretboard : fretboard,
+
         }
     }
     pub fn generate(self: &Self) {
