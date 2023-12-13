@@ -4,8 +4,8 @@ pub mod instrument {
     use dioxus_core::DynamicNode;
     use dioxus_html::div;
     use strum_macros::EnumString;
-    use crate::note::note::Note;
-
+    use crate::note::note::{Note, NoteName, TuningType};
+    use std::option::Option::Some;
     #[derive(Debug, Copy, Clone, PartialEq, EnumString)]
     pub enum InstrumentType {
         #[strum(serialize = "Guitar")]
@@ -49,74 +49,64 @@ pub mod instrument {
 
     #[derive(Debug, PartialEq, Clone)]
     pub struct FretBoard {
-        pub notes: Vec<Note>,
+        pub notes: Vec<Vec<Note>>,
         pub number_of_strings: u8,
         pub number_of_frets: u8,
     }
 
     impl Iterator for FretBoard {
         type Item = Note;
-
         fn next(&mut self) -> Option<Self::Item> {
-            let current_index = 0;
-            if current_index < self.notes.len() {
-                let note = self.notes[current_index].clone();
-                Some(note)
-            } else {
-                None
+            let mut current_index = 0 as usize;
+            if current_index <= self.number_of_strings as usize {
+            let mut current_jdex = 0 as usize;
+            if current_jdex <=self.number_of_frets as usize {
+             current_jdex+=1;
+                let note = self.notes[current_index][current_jdex].clone();
+               return Some(note);
+              }
+             current_index+=1;
             }
-        }
+             return None;
+            }
+
+
     }
 
     impl FretBoard {
         fn new(number_of_strings: u8, number_of_frets: u8) -> Self {
             FretBoard {
-                notes: Vec::<Note>::new(),
+                notes: Self::generate(number_of_strings,number_of_frets),
                 number_of_strings,
                 number_of_frets,
             }
         
         }
-        
+        fn generate(number_of_strings : u8 ,number_of_frets : u8) -> Vec::<Vec::<Note>> {
+        let mut vector = Vec::new();
+        for i in 1..=(number_of_strings+1){
+        let mut fret_vector = Vec::new();
+        for j in 1..=(number_of_frets+1){
+        fret_vector = Note::note_setter(&mut fret_vector, TuningType::Drop, NoteName::D, i, j);
+        }
+        vector.push(fret_vector);
+        }
+        vector.to_vec()
+        }
         pub fn into_vnode<'a>(&'a self, cx: &'a ScopeState) -> Element{
             // Render the first note and create a DynamicNode from it
           
-            render!(  
-                for note in  self.notes.iter() {
-                  note.into_vnode(cx)
+            render!(
+                for musicalString in self.notes.iter() {
+                for musicalNote in musicalString.iter(){
+
+                  musicalNote.into_vnode(cx)
+
+                }
                 }
                 )
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Instrument {

@@ -7,7 +7,7 @@ mod screen;
 use dioxus::prelude::*;
 use dioxus_elements::{link, button};
 use info_screen::get_info;
-use screen::screen::Screen;
+use screen::Screen;
 use shipyard::Component;
 use instrument::instrument::{InstrumentType, Bridge, BridgedInstrumentType, Instrument};
 

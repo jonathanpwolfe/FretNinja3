@@ -2,14 +2,17 @@ pub mod note {
     use dioxus::prelude::*;
     use dioxus::prelude::{IntoDynNode, Scope, render, VNode};
     use shipyard::Component;
-    use dioxus_core::DynamicNode;
     use dioxus_html::button;
     use dioxus::events::MouseData;
+    use dioxus_core::DynamicNode;
+    use strum_macros::EnumString;
+    use std::vec::Vec as Vector;
+
     #[derive(Debug, Clone, PartialEq, Component)]
     pub struct Note {
         note_name: NoteName,
         }
-  impl Note {
+impl Note {
 pub fn into_vnode<'a>(&'a self, cx: &'a ScopeState) -> Element<'a> {
     render!(rsx!{button{
      onclick: move |_| self.highlight(cx),
@@ -18,7 +21,9 @@ pub fn into_vnode<'a>(&'a self, cx: &'a ScopeState) -> Element<'a> {
    } )
 }
 
-
+fn new(note_name : NoteName) -> Self {
+    Note{note_name}
+}
 
 fn highlight(self: &Self, cx : &ScopeState){
 }
@@ -29,13 +34,29 @@ fn highlight(self: &Self, cx : &ScopeState){
      cx.render( rsx!{format!("{{<span>{:?}</span>}}", self.note_name)})
 
     }
+
+    pub fn note_setter(fret_vector : &mut Vector<Note>, tuning_type :  TuningType, note_name: NoteName, i : u8, j : u8) -> Vector<Note>{
+    let note : Note = Note::new(note_name);
+    fret_vector.push(note);
+    fret_vector.to_vec()
+    }
+
 }
 
 
 
 
-
-    use strum_macros::EnumString;
+   #[derive(EnumString,PartialEq, Clone, Debug)]
+       pub enum TuningType {
+       #[strum(serialize = "Standard")]
+       Standard,
+       #[strum(serialize = "Open")]
+       Open,
+       #[strum(serialize = "Drop")]
+       Drop,
+       #[strum(serialize = "Custom")]
+       Custom,
+       }
 
 
 
